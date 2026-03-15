@@ -225,7 +225,7 @@ pipeline {
                             }
                         }
                         steps {
-                            sh "mvn clean package -DskipTests -pl ${SERVICE}"
+                            sh "mvn clean package -DskipTests -pl ${SERVICE} -am"
                         }
                     }
 
@@ -239,7 +239,7 @@ pipeline {
                             }
                         }
                         steps {
-                            sh "mvn test -pl ${SERVICE}"
+                            sh "mvn test -pl ${SERVICE} -am"
                             
                             sh "chmod +x mvnw || true" 
                             sh "chmod +x ${SERVICE}/mvnw || true"
