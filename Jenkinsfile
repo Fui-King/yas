@@ -257,8 +257,6 @@ pipeline {
                                         -pl ${SERVICE} -am \
                                         -Dsonar.projectKey=Fui-King_yas \
                                         -Dsonar.organization=fui-king \
-                                        -Dsonar.moduleKey=${SERVICE} \
-                                        -Dsonar.projectName="Yas - ${SERVICE}" \
                                         -Dsonar.host.url=https://sonarcloud.io
                                     """
                                 //}
