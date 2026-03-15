@@ -234,16 +234,28 @@ pipeline {
                             junit '**/target/surefire-reports/*.xml'
                             sh 'mvn jacoco:report'
                             // Đẩy coverage lên SonarQube
-                            withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                                sh "mvn sonar:sonar -Dsonar.login=${SONARQUBE_TOKEN}"
+                            withSonarQubeEnv("SonarCloud") {
+                                sh """
+                                    mvn sonar:sonar \
+                                    -Dsonar.projectKey=Fui-King_yas \
+                                    -Dsonar.organization=fui-king \
+                                    -Dsonar.host.url=https://sonarcloud.io \
+                                    -Dsonar.token=${SONARQUBE_TOKEN}
+                                """
                             }
                         } else if (fileExists('package.json')) {
                             sh 'npm install'
                             sh 'npm run test -- --coverage'
                             junit 'coverage/junit.xml'
                             // Đẩy coverage lên SonarQube
-                            withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                                sh "npx sonar-scanner -Dsonar.login=${SONARQUBE_TOKEN}"
+                            withSonarQubeEnv("SonarCloud") {
+                                sh """
+                                    mvn sonar:sonar \
+                                    -Dsonar.projectKey=Fui-King_yas \
+                                    -Dsonar.organization=fui-king \
+                                    -Dsonar.host.url=https://sonarcloud.io \
+                                    -Dsonar.token=${SONARQUBE_TOKEN}
+                                """
                             }
                         }
                     }
