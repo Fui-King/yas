@@ -172,8 +172,8 @@ pipeline {
     environment {
         // Thay đổi các biến này cho phù hợp với Jenkins của bạn
         SONARQUBE_SERVER = 'SonarQube'
-        SONARQUBE_TOKEN = credentials('sonar-token')
-        SNYK_TOKEN = credentials('snyk-token')
+        SONARQUBE_TOKEN = credentials('fuiking-sonar-token')
+        SNYK_TOKEN = credentials('fuiking-snyk-token')
         GITLEAKS_CONFIG = 'gitleaks.toml'
     }
     options {

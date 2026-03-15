@@ -4,7 +4,7 @@ import { Filter } from '../../modules/catalog/models/Filter';
 import styles from '../../styles/Filter.module.css';
 
 type Props = { filter: Filter };
-// Test CI 22
+// Test CI 23
 const Filter = ({ filter }: Props) => {
   return (
     <Dropdown>
