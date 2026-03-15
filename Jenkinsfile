@@ -192,10 +192,16 @@ pipeline {
         stage('Detect Changed Service') {
             steps {
                 script {
-                    // Tự động xác định service thay đổi nếu chưa truyền vào
                     if (!params.SERVICE) {
-                        def changed = sh(script: "git diff --name-only origin/main...HEAD | grep '/' | cut -d'/' -f1 | sort | uniq", returnStdout: true).trim()
-                        env.SERVICE = changed.tokenize('\n')[0] // Lấy service đầu tiên thay đổi
+                        // So sánh commit hiện tại (HEAD) với commit trước đó (HEAD~1)
+                        def changed = sh(script: "git diff --name-only HEAD~1 HEAD | grep '/' | cut -d'/' -f1 | sort | uniq", returnStdout: true).trim()
+                        
+                        if (changed) {
+                            env.SERVICE = changed.tokenize('\n')[0]
+                        } else {
+                            // Fix cứng thư mục mặc định nếu không nhận diện được, thay 'ten-thu-muc-service-cua-ban' cho đúng
+                            env.SERVICE = 'ten-thu-muc-service-cua-ban' 
+                        }
                     }
                     echo "Service to build/test: ${env.SERVICE}"
                 }
