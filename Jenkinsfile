@@ -166,15 +166,9 @@ pipeline {
         stage('Setup Tools') {
             steps {
                 script {
-                    echo "Checking if Snyk CLI is installed..."
+                    echo "Checking Snyk CLI..."
                     def snykExists = sh(script: 'command -v snyk', returnStatus: true) == 0
-                    
-                    if (!snykExists) {
-                        echo "Snyk CLI not found. Installing via npm..."
-                        sh 'npm install -g snyk'
-                    } else {
-                        echo "Snyk CLI is already installed. Skipping installation."
-                    }
+                    if (!snykExists) { sh 'npm install -g snyk' }
                 }
             }
         }
@@ -214,7 +208,6 @@ pipeline {
                     }
                 }
                 stages {
-                    // --- PHASE 1: BUILD ---
                     stage('Build') {
                         when { 
                             anyOf {
@@ -224,11 +217,11 @@ pipeline {
                             }
                         }
                         steps {
+                            // Bỏ clean để tránh lỗi file lock khi chạy song song
                             sh "mvn package -DskipTests -pl ${SERVICE} -am"
                         }
                     }
 
-                    // --- PHASE 2: TEST & SCAN ---
                     stage('Test & Scan') {
                         when { 
                             anyOf {
@@ -243,6 +236,7 @@ pipeline {
                             sh "chmod +x mvnw || true" 
                             sh "chmod +x ${SERVICE}/mvnw || true"
                             
+                            // Snyk Scan
                             withCredentials([string(credentialsId: 'fuiking-snyk-token', variable: 'SNYK_TOKEN')]) {
                                 sh """
                                     snyk auth \$SNYK_TOKEN
@@ -250,20 +244,9 @@ pipeline {
                                 """
                             }
 
+                            // SonarQube Scan - Chạy trong thư mục service để tránh lỗi Reactor
                             withSonarQubeEnv('SonarCloud') {
-                                // dir("${SERVICE}") {
-                                //     sh """
-                                //         mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                //         -Dsonar.projectKey=Fui-King_yas \
-                                //         -Dsonar.organization=fui-king \
-                                //         -Dsonar.moduleKey=${SERVICE} \
-                                //         -Dsonar.projectName="Yas - ${SERVICE}" \
-                                //         -Dsonar.host.url=https://sonarcloud.io
-                                //     """
-                                // }
-
-                                withSonarQubeEnv('SonarCloud') {
-                                    dir("${SERVICE}") {
+                                dir("${SERVICE}") {
                                     sh """
                                         mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
                                         -Dsonar.projectKey=Fui-King_yas \
@@ -273,8 +256,6 @@ pipeline {
                                         -Dsonar.host.url=https://sonarcloud.io
                                     """
                                 }
-                                }
-
                             }
                         }
                         post {
@@ -305,26 +286,18 @@ pipeline {
                     }
                 }
                 stages {
-                    // --- PHASE 1: BUILD ---
                     stage('Build') {
-                        when { 
-                            changeset pattern: "${UI_SERVICE}/**/*", comparator: 'GLOB'
-                        }
+                        when { changeset pattern: "${UI_SERVICE}/**/*", comparator: 'GLOB' }
                         steps {
                             dir("${UI_SERVICE}") {
-                                echo "Building UI/BFF Project: ${UI_SERVICE}..."
                                 sh 'npm ci'
                                 sh 'npm run lint'
                                 sh 'npm run build'
                             }
                         }
                     }
-
-                    // --- PHASE 2: TEST & SCAN ---
                     stage('Test & Scan') {
-                        when { 
-                            changeset pattern: "${UI_SERVICE}/**/*", comparator: 'GLOB'
-                        }
+                        when { changeset pattern: "${UI_SERVICE}/**/*", comparator: 'GLOB' }
                         steps {
                             withCredentials([string(credentialsId: 'fuiking-snyk-token', variable: 'SNYK_TOKEN')]) {
                                 sh """
