@@ -169,6 +169,11 @@
 
 pipeline {
     agent any
+    tools {
+        jdk 'JDK-21'
+        maven 'maven-3'
+        nodejs 'NodeJS-20'
+    }
     environment {
         // Thay đổi các biến này cho phù hợp với Jenkins của bạn
         SONARQUBE_SERVER = 'SonarQube'
