@@ -247,14 +247,18 @@ pipeline {
                             // SonarQube Scan - Chạy trong thư mục service để tránh lỗi Reactor
                             withSonarQubeEnv('SonarCloud') {
                                 dir("${SERVICE}") {
-                                    sh """
-                                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                        -Dsonar.projectKey=Fui-King_yas \
-                                        -Dsonar.organization=fui-king \
-                                        -Dsonar.moduleKey=${SERVICE} \
-                                        -Dsonar.projectName="Yas - ${SERVICE}" \
-                                        -Dsonar.host.url=https://sonarcloud.io
-                                    """
+                                    // Sử dụng catchError để Stage chỉ bị UNSTABLE (Vàng) nếu Sonar lỗi, không làm chết Pipeline
+                                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                                        sh """
+                                            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                                            -Dsonar.projectKey=Fui-King_yas \
+                                            -Dsonar.organization=fui-king \
+                                            -Dsonar.moduleKey=${SERVICE} \
+                                            -Dsonar.projectName="Yas - ${SERVICE}" \
+                                            -Dsonar.host.url=https://sonarcloud.io \
+                                            -Dsonar.branch.name=main
+                                        """
+                                    }
                                 }
                             }
                         }
