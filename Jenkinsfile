@@ -247,7 +247,7 @@ pipeline {
                             withCredentials([string(credentialsId: 'fuiking-snyk-token', variable: 'SNYK_TOKEN')]) {
                                 sh """
                                     snyk auth \$SNYK_TOKEN
-                                    snyk test --file=${SERVICE}/pom.xml --severity-threshold=high
+                                    snyk test --file=${SERVICE}/pom.xml --severity-threshold=high -- -Drevision=1.0-SNAPSHOT
                                 """
                             }
 
