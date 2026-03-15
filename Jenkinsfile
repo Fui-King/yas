@@ -203,7 +203,15 @@ pipeline {
         }
         stage('Gitleaks Scan') {
             steps {
-                sh 'gitleaks detect --source=. --config=$GITLEAKS_CONFIG --no-git'
+                script {
+                    echo "Bắt đầu quét Gitleaks qua Docker..."
+                    sh """
+                        docker run --rm \
+                        -v \$(pwd):/my-project \
+                        zricethezav/gitleaks:latest \
+                        detect --source="/my-project" --config="/my-project/${GITLEAKS_CONFIG}" --no-git
+                    """
+                }
             }
         }
         stage('Test & Coverage') {
