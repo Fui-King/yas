@@ -148,7 +148,6 @@
 //         }
 //     }
 // }
-
 pipeline {
     agent any
     
@@ -225,7 +224,7 @@ pipeline {
                             }
                         }
                         steps {
-                            sh "mvn clean package -DskipTests -pl ${SERVICE} -am"
+                            sh "mvn package -DskipTests -pl ${SERVICE} -am"
                         }
                     }
 
@@ -251,7 +250,6 @@ pipeline {
                                 """
                             }
 
-                            // Giữ nguyên logic SonarQube ban đầu của bạn
                             withSonarQubeEnv('SonarCloud') {
                                 dir("${SERVICE}") {
                                     sh """
