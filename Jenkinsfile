@@ -251,15 +251,16 @@ pipeline {
                             }
 
                             withSonarQubeEnv('SonarCloud') {
-                                //dir("${SERVICE}") {
+                                dir("${SERVICE}") {
                                     sh """
                                         mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                                        -pl ${SERVICE} -am \
                                         -Dsonar.projectKey=Fui-King_yas \
                                         -Dsonar.organization=fui-king \
+                                        -Dsonar.moduleKey=${SERVICE} \
+                                        -Dsonar.projectName="Yas - ${SERVICE}" \
                                         -Dsonar.host.url=https://sonarcloud.io
                                     """
-                                //}
+                                }
                             }
                         }
                         post {
