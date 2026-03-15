@@ -153,7 +153,7 @@ pipeline {
     agent any
     
     tools {
-        jdk 'JDK-25'
+        jdk 'JDK-21'
         maven 'maven-3'
         nodejs 'NodeJS-20' 
     }
