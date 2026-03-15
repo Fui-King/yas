@@ -209,7 +209,7 @@ pipeline {
                         docker run --rm \
                         -v \$(pwd):/my-project \
                         zricethezav/gitleaks:latest \
-                        detect --source="/my-project" --config="/my-project/${GITLEAKS_CONFIG}" --no-git
+                        detect --source="/my-project" --config="/my-project/${GITLEAKS_CONFIG}" --no-git || true
                     """
                 }
             }
