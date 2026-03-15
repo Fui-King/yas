@@ -19,3 +19,5 @@ abstract class AbstractCircuitBreakFallbackHandler {
         throw throwable;
     }
 }
+
+// Test CI 
